@@ -22,7 +22,9 @@ RECT clientSize;
 
 int dx = 0, dy = 0;
 int bx = 250, by = 150;
-int dbx = -1, dby = 1;
+int const SPEED = 5;
+int dbx = -SPEED, dby = SPEED;
+
 
 //timer:
 #define TIMER1 111
@@ -185,17 +187,17 @@ void OnTimer(HWND hwnd, UINT id)
 
 	if (by > 250)
 	{
-		dby = -1;
+		dby = -SPEED;
 	}
 	if (by < 5)
 	{
-		dby = 1;
+		dby = SPEED;
 	}
 
-	if (by < dy + 10 && by > dy - 10 &&
-		bx <= 5)
+	if (by < dy + 20 && by > dy - 20 &&
+		bx <= 25)
 	{
-		dbx = 1;
+		dbx = SPEED;
 	}
 }
 //************************************************************************
@@ -235,7 +237,7 @@ void OnPaint(HWND hwnd)
 	//draw rectangle:
 
 	//left paddle
-	draw_rectangle(DC, 5, dy - 10, 5, dy + 10, 255, 0, 0, 5);
+	draw_rectangle(DC, 25, dy - 20, 25, dy + 20, 255, 0, 0, 5);
 	//ball
 	draw_line(DC, bx, by, bx+1, by+1, 0, 0, 255, 10);
 	//right paddle

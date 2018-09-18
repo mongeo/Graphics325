@@ -15,14 +15,26 @@ static char MainWin[] = "MainWin";
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 void draw_line(HDC DC, int x, int y, int a, int b, int red, int green, int blue, int width);
 void draw_rectangle(HDC DC, int from_x, int from_y, int to_x, int to_y, int red, int green, int blue, int width);
+void restart();
 
 HBRUSH  hWinCol = CreateSolidBrush(RGB(180, 180, 180));
 
 HWND g_hwnd=NULL;
 
-int dx = 0, dy = 0;//mouse position
-int WINDOW_WIDTH = 500, WINDOW_HEIGHT = 500;
-int PADDLE_HEIGHT = 400, PADDLE_WIDTH = 25;
+//mouse position
+int dx = 0;
+int dy = 0;
+
+//window size
+int const WINDOW_WIDTH = 500;
+int const WINDOW_HEIGHT = 500;
+
+//paddle position and width
+int PADDLE_HEIGHT = 400;
+int PADDLE_WIDTH = 25;
+
+//set the speed of the ball
+int const SPEED = 5;
 
 struct Ball
 {
@@ -36,31 +48,29 @@ struct Ball
 
 		//Right side of window
 		if (x > WINDOW_WIDTH - 25) {
-			bdx = -1;
+			bdx = -SPEED;
 		}
 		//Left side of window
 		if (x < 5) {
-			bdx = 1;
+			bdx = SPEED;
 		}
 
 		//Paddle
 		if (x <= dx + PADDLE_WIDTH && x >= dx - PADDLE_WIDTH && y == PADDLE_HEIGHT)
 		{
-			bdy = -1;
+			bdy = -SPEED;
 			OutputDebugStringW(L"X");
 		}
 
-		//Bottom of window
-		if (y > WINDOW_HEIGHT - 50) {
-			bdy = - 1;
+		//Below Paddle
+		if (y > WINDOW_HEIGHT) {
+			//bdy = -SPEED;//bounces
+			restart();
 		}
 		//Top of window
 		if (y < 10) {
-			bdy = 1;
+			bdy = SPEED;
 		}
-
-
-
 	}
 
 	void draw(HDC dc)
@@ -93,6 +103,54 @@ struct Brick
 };
 
 std::vector<Brick*> bricks; //<-- like Java's ArrayList class
+
+void restart() {
+	//set first row colors
+	int rowR = 0;
+	int rowG = 175;
+	int rowB = 255;
+
+	for (int j = 0; j < 5; ++j)
+	{
+		//change colors every iteration
+		rowG += 5*(1-j);
+		rowB += 25*(1-j);
+		for (int i = 0; i < 15; ++i)
+		{
+			Brick* b = new Brick();
+
+			b->width = 23;
+			b->height = 5;
+
+			b->x = i * (b->width + 8) + 15;
+			b->y = j * (b->height + 2) + 5;
+
+			b->r = rowR;
+			b->g = rowG;
+			b->b = rowB;
+
+			b->exists = true;
+
+			bricks.push_back(b);
+		}
+	}
+	//initial ball position
+	ball.x = 250;
+	ball.y = 250;
+
+	//randomly picks initial ball direction left or right
+	srand(time(NULL));
+	int randomDir = rand() % 10;
+	if (randomDir < 5) {
+		ball.bdx = -SPEED;
+	}
+	else {
+		ball.bdx = SPEED;
+	}
+	ball.bdy = SPEED;
+	ball.r = 5;
+}
+
 
 //timer:
 #define TIMER1 111
@@ -227,6 +285,8 @@ if ((keyFlags & MK_RBUTTON) == MK_RBUTTON)
 ///////////////////////////////////
 #define TIMER1 1
 
+
+
 BOOL OnCreate(HWND hwnd, CREATESTRUCT FAR* lpCreateStruct)
 {
 	g_hwnd = hwnd;
@@ -237,43 +297,12 @@ BOOL OnCreate(HWND hwnd, CREATESTRUCT FAR* lpCreateStruct)
 		return FALSE;
 	}
 	
-	for (int j = 0; j < 5; ++j)
-	{
-		for (int i = 0; i < 15; ++i)
-		{
-			Brick* b = new Brick();
 
-			b->width = 23;
-			b->height = 5;
-
-			b->x = i * (b->width + 8) + 15;
-			b->y = j * (b->height + 2) + 5;
-			
-			b->r = 255;
-			b->g = 0;
-			b->b = 0;
-
-			b->exists = true;
-
-			bricks.push_back(b);
-		}
-	}
-	ball.x = 250;
-	ball.y = 250;
-	srand(time(NULL));
-	
-	int randomDir = rand() % 10;
-	if (randomDir < 10) {
-		ball.bdx = -1;
-	}
-	else {
-		ball.bdx = 1;
-	}
-	ball.bdy = 1;
-	ball.r = 5;
-
+	restart();
 	return TRUE;
 }
+
+
 
 void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
@@ -298,7 +327,7 @@ void OnTimer(HWND hwnd, UINT id)
 		if (bricks[i]->exists && bricks[i]->collidesWith(ball)) //<-- short circuit trick
 		{
 			bricks[i]->exists = false;
-			ball.bdy = 1;
+			ball.bdy = SPEED;
 		}
 	}
 }
@@ -322,7 +351,7 @@ void OnPaint(HWND hwnd)
 	hbmOld = (HBITMAP)SelectObject(DC, hbmMem);
 	COLORREF bg = RGB(255, 255, 255);
 	//if(rglobe.EckSizing.active_sizing())
-	//bg=RGB(255,255,0);
+	bg=RGB(30,5,10);
 	HBRUSH hbrBkGnd = CreateSolidBrush(bg);
 	FillRect(DC, &rc, hbrBkGnd);
 	DeleteObject(hbrBkGnd);

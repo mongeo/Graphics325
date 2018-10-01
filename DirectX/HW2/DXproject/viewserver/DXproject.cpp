@@ -31,7 +31,8 @@
 
 
 
-
+#define _USE_MATH_DEFINES // for C++  
+#include <cmath> 
 #include "ground.h"
 //	defines
 #define MAX_LOADSTRING 1000
@@ -82,6 +83,8 @@ ID3D11Buffer*			g_pConstantBuffer11 = NULL;
 ID3D11VertexShader*     g_pVertexShader = NULL;
 ID3D11PixelShader*      g_pPixelShader = NULL;
 
+
+const int NUM_VERTICES = 3;
 
 //	structures we need later
 
@@ -232,14 +235,24 @@ HRESULT InitDevice()
 		return hr;
 
 	// Create vertex buffer, the triangle
-	SimpleVertex vertices[6];
-	vertices[0].Pos = XMFLOAT3(-0.5f, 0.0f, 0.0f);
-	vertices[1].Pos = XMFLOAT3(0.0f, 0.5f, 0.0f);
-	vertices[2].Pos = XMFLOAT3(0.5f, 0.0f, 0.0f);
+	SimpleVertex vertices[NUM_VERTICES];
+	float param = 30.0f;
+	float mpi = 3.1415926f;
+	
+	vertices[0].Pos = XMFLOAT3(cos(7.0*M_PI/6), sin(7.0*M_PI / 6), 0.0f);//
+	vertices[1].Pos = XMFLOAT3(cos(M_PI), sin(M_PI), 0.0f);//
+	vertices[2].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//O
 
-	vertices[3].Pos = XMFLOAT3(0.5f, 0.0f, 0.5f);
-	vertices[4].Pos = XMFLOAT3(0.0f, -0.5f, 0.5f);
-	vertices[5].Pos = XMFLOAT3(-0.5f, 0.0f, 0.5f);
+	//vertices[3].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//O
+	//vertices[4].Pos = XMFLOAT3(0.0f, 0.5f, 0.0f);//
+	//vertices[5].Pos = XMFLOAT3(0.5f, 0.0f, 0.0f);//
+
+	//start = finish;
+	//finish += delta;
+	//vertices[3].Pos = XMFLOAT3(0.0, 0.0f, 0.0f);//O
+	//vertices[4].Pos = XMFLOAT3(cos(start), sin(start), 0.0f);//
+	//vertices[5].Pos = XMFLOAT3(cos(finish), sin(finish), 0.0f);//
+
 
 
 	D3D11_BUFFER_DESC bd;
@@ -248,8 +261,8 @@ HRESULT InitDevice()
 
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	int numVertices = 6;
-	bd.ByteWidth = sizeof(SimpleVertex) * numVertices;
+
+	bd.ByteWidth = sizeof(SimpleVertex) * NUM_VERTICES;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;	
 	ZeroMemory(&InitData, sizeof(InitData));
@@ -314,7 +327,7 @@ HRESULT InitDevice()
 
 		
 		// Clear the back buffer 
-		float ClearColor[4] = { 0.0f, 0.6f, 0.0f, 1.0f }; // red,green,blue,alpha
+		float ClearColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f }; // red,green,blue,alpha
 		g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, ClearColor);
 
 		// Render a triangle
@@ -325,7 +338,7 @@ HRESULT InitDevice()
 		UINT stride = sizeof(SimpleVertex);
 		UINT offset = 0;
 		g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-		g_pImmediateContext->Draw(6, 0);		//whatever you have set before as model (mesh, vertexbuffer) will be drawn here finally. First parameter is the vertex count, second the offset
+		g_pImmediateContext->Draw(NUM_VERTICES, 0);		//whatever you have set before as model (mesh, vertexbuffer) will be drawn here finally. First parameter is the vertex count, second the offset
 
 												// Set vertex buffer, setting the model
 

@@ -84,7 +84,7 @@ ID3D11VertexShader*     g_pVertexShader = NULL;
 ID3D11PixelShader*      g_pPixelShader = NULL;
 
 
-const int NUM_VERTICES = 3;
+const int NUM_VERTICES = 48;
 
 //	structures we need later
 
@@ -236,24 +236,86 @@ HRESULT InitDevice()
 
 	// Create vertex buffer, the triangle
 	SimpleVertex vertices[NUM_VERTICES];
-	float param = 30.0f;
-	float mpi = 3.1415926f;
-	
-	vertices[0].Pos = XMFLOAT3(cos(7.0*M_PI/6), sin(7.0*M_PI / 6), 0.0f);//
-	vertices[1].Pos = XMFLOAT3(cos(M_PI), sin(M_PI), 0.0f);//
-	vertices[2].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//O
 
-	//vertices[3].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//O
-	//vertices[4].Pos = XMFLOAT3(0.0f, 0.5f, 0.0f);//
-	//vertices[5].Pos = XMFLOAT3(0.5f, 0.0f, 0.0f);//
+	int div = 16;
+	int num = 3;
+	vertices[0].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//1
+	vertices[1].Pos = XMFLOAT3(cos(M_PI / div), sin(M_PI / div), 0.0f);//
+	vertices[2].Pos = XMFLOAT3(cos(M_PI / div), -sin(M_PI / div), 0.0f);//
 
-	//start = finish;
-	//finish += delta;
-	//vertices[3].Pos = XMFLOAT3(0.0, 0.0f, 0.0f);//O
-	//vertices[4].Pos = XMFLOAT3(cos(start), sin(start), 0.0f);//
-	//vertices[5].Pos = XMFLOAT3(cos(finish), sin(finish), 0.0f);//
+	vertices[3].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//2
+	vertices[4].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num*M_PI / div), 0.0f);//
+	vertices[5].Pos = XMFLOAT3(cos(M_PI / div), sin(M_PI / div), 0.0f);//
 
+	num += 2;
+	vertices[6].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//3
+	vertices[7].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num *M_PI / div), 0.0f);//
+	vertices[8].Pos = XMFLOAT3(cos((num-2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
 
+	num += 2;
+	vertices[9].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//4
+	vertices[10].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[11].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[12].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//5
+	vertices[13].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[14].Pos = XMFLOAT3(cos((num-2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[15].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//6
+	vertices[16].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[17].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[18].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//7
+	vertices[19].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[20].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[21].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//8
+	vertices[22].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[23].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[24].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//9
+	vertices[25].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[26].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[27].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//10
+	vertices[28].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[29].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[30].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//11
+	vertices[31].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[32].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[33].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//12
+	vertices[34].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[35].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[36].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//13
+	vertices[37].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[38].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[39].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//14
+	vertices[40].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[41].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[42].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//15
+	vertices[43].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[44].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+
+	num += 2;
+	vertices[45].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//16
+	vertices[46].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
+	vertices[47].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
 
 	D3D11_BUFFER_DESC bd;
 	D3D11_SUBRESOURCE_DATA InitData;
@@ -327,7 +389,7 @@ HRESULT InitDevice()
 
 		
 		// Clear the back buffer 
-		float ClearColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f }; // red,green,blue,alpha
+		float ClearColor[4] = { 0.0f, 0.4f, 0.0f, 1.0f }; // red,green,blue,alpha
 		g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, ClearColor);
 
 		// Render a triangle

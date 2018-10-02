@@ -220,7 +220,7 @@ HRESULT InitDevice()
 
 	VsConstData.some_variable_a = 0;
 	VsConstData.some_variable_b = 0;
-	VsConstData.some_variable_c = 1;
+	VsConstData.some_variable_c = 0;
 	VsConstData.some_variable_d = 1;
 
 	// Fill in a buffer description.
@@ -249,7 +249,8 @@ HRESULT InitDevice()
 
 float angle = 0;
 bool pressed = false;
-int colorCount = 0;
+bool bPressed = false;
+int colorCount = 0;//increments to change color when mouse clicked
 void Render()
 {
 	angle += 0.02;
@@ -267,7 +268,9 @@ void Render()
 	}
 	*/
 	VsConstData.some_variable_a = colorCount;
+	VsConstData.some_variable_c = bPressed ? 1 : 0;
 	VsConstData.some_variable_d = pressed ? 1 : 0; //<-- true does not necessarily equal 1
+
 
 	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer11, 0, 0, &VsConstData, 0, 0);	//copying it freshly into the GPU buffer from VsConstData
 	g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer11);					//setting it enable for the VertexShader
@@ -471,8 +474,8 @@ void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 
 	switch (vk)
 		{
-			case 65://a
-
+			case 'B'://a
+				bPressed = true;
 				break;
 			default:break;
 			
@@ -484,7 +487,10 @@ void OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 	{
 	switch (vk)
 		{
-			default:break;
+		case 'B'://B
+			bPressed = false;
+			break;
+		default:break;
 			
 		}
 

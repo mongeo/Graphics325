@@ -1,0 +1,48 @@
+constant buffer====
+GPU & CPU have different memory
+Need to pass over to shader...
+constant buffer is used to transfer data from cpu to gpu
+
+You can think of the constant buffer like a truck. 
+We are loading info onto the truck at the CPU mem and unloading it at the GPU.
+
+Create a constant buffer (in the init function)
+Have a corresponding struct in the shader
+Update and pass it to the shader
+
+
+
+
+In  CPP file
+struct VS_CONSTANT_BUFFER
+{
+	float some_variable_a;
+	float some_variable_b;
+	float some_variable_c;
+	float some_variable_d;
+};	//we will copy that periodically to its twin on the GPU, with some_variable_a/b for the mouse coordinates
+//note: we can only copy chunks of 16 byte to the GPU
+VS_CONSTANT_BUFFER VsConstData;		//gloab object of this structure
+
+In shader file
+cbuffer VS_CONSTANT_BUFFER : register(b0)
+{
+	float cb_a;
+	float cb_b;
+	float cb_c;
+	float cb_d;
+};
+
+
+
+
+
+	VsConstData.some_variable_a = 0;
+	VsConstData.some_variable_b = 0;
+	VsConstData.some_variable_c = 1;
+	VsConstData.some_variable_d = 1;
+In this code, we are setting constant variables. 
+Anytime we want to pass variables to the shader, 
+we are going to need to pass those values through the constant buffer. 
+For example, if we want to know mouse coordinates in order to move a shape in the vertex buffer, 
+we have no way of knowing what those values are unless we pass them through the constant buffer.

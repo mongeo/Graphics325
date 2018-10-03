@@ -389,7 +389,7 @@ HRESULT InitDevice()
 
 		
 		// Clear the back buffer 
-		float ClearColor[4] = { 0.0f, 0.4f, 0.0f, 1.0f }; // red,green,blue,alpha
+		float ClearColor[4] = { 0.2f, 0.7f, 0.2f, 1.0f }; // red,green,blue,alpha
 		g_pImmediateContext->ClearRenderTargetView(g_pRenderTargetView, ClearColor);
 
 		// Render a triangle

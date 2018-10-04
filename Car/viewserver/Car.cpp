@@ -84,7 +84,7 @@ ID3D11VertexShader*     g_pVertexShader = NULL;
 ID3D11PixelShader*      g_pPixelShader = NULL;
 
 
-const int NUM_VERTICES = 96;
+const int NUM_VERTICES = 108;
 
 //	structures we need later
 
@@ -244,19 +244,37 @@ HRESULT InitDevice()
 	int num = -3;
 	for (int i = 0; i < WHEEL_SIZE; i++ ) {
 		vertices[i++].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//1
-		vertices[i++].Pos = XMFLOAT3(cos((num * M_PI) / div), sin((num * M_PI) / div), 0.0f);//
-		vertices[i].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
+		vertices[i++].Pos = XMFLOAT3(cos((num * M_PI) / div), sin((num * M_PI) / div), 0.0f);
+		vertices[i].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);
 		num += 2;
 	}
 
 	//Wheel 2
 	num = -3;
 	for (int i = 48; i < WHEEL_SIZE+WHEEL_SIZE; i++) {
-		vertices[i++].Pos = XMFLOAT3(3.0f, 0.0f, 0.0f);//1
-		vertices[i++].Pos = XMFLOAT3(cos((num * M_PI) / div)+3.0f, sin((num * M_PI) / div), 0.0f);//
-		vertices[i].Pos = XMFLOAT3(cos((num - 2) * M_PI / div)+3.0f, sin((num - 2) * M_PI / div), 0.0f);//
+		vertices[i++].Pos = XMFLOAT3(3.0f, 0.0f, 0.0f);
+		vertices[i++].Pos = XMFLOAT3(cos((num * M_PI) / div)+3.0f, sin((num * M_PI) / div), 0.0f);
+		vertices[i].Pos = XMFLOAT3(cos((num - 2) * M_PI / div)+3.0f, sin((num - 2) * M_PI / div), 0.0f);
 		num += 2;
 	}
+
+	//Body
+	vertices[96].Pos = XMFLOAT3(-2.0f, 2.0f, 0.0f);//1 
+	vertices[97].Pos = XMFLOAT3(5.0f, 0.5f, 0.0f);
+	vertices[98].Pos = XMFLOAT3(-2.0f, 0.5f, 0.0f);
+
+	vertices[99].Pos = XMFLOAT3(-2.0f, 2.0f, 0.0f);//2
+	vertices[100].Pos = XMFLOAT3(5.0f, 2.0f, 0.0f);
+	vertices[101].Pos = XMFLOAT3(5.0f, 0.5f, 0.0f);
+
+	vertices[102].Pos = XMFLOAT3(-1.0f, 2.0f, 0.0f);//3
+	vertices[103].Pos = XMFLOAT3(1.0f, 4.0f, 0.0f);
+	vertices[104].Pos = XMFLOAT3(1.0f, 2.0f, 0.0f);
+
+	vertices[105].Pos = XMFLOAT3(1.0f, 4.0f, 0.0f);
+	vertices[106].Pos = XMFLOAT3(5.0f, 3.0f, 0.0f);
+	vertices[107].Pos = XMFLOAT3(5.0f, 2.0f, 0.0f);
+
 
 	/*
 	vertices[0].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//1

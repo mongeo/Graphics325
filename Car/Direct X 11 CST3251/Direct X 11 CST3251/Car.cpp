@@ -76,15 +76,17 @@ ID3D11RenderTargetView* g_pRenderTargetView = NULL;
 ID3D11InputLayout*      g_pVertexLayout = NULL;
 //our model (array of vertices on the GPU MEM)
 ID3D11Buffer*           g_pVertexBuffer = NULL; //our model
+ID3D11Buffer*           g_pVertexBuffer2 = NULL; //our model
+
 //exchange of data, e.g. sending mouse coordinates to the GPU
 ID3D11Buffer*			g_pConstantBuffer11 = NULL;
 
 // function on the GPU what to do with the model exactly
 ID3D11VertexShader*     g_pVertexShader = NULL;
 ID3D11PixelShader*      g_pPixelShader = NULL;
-
-
-const int NUM_VERTICES = 108;
+const int WHEEL_SIZE = 48;
+const int BODY_SIZE = 15;
+const int NUM_VERTICES = WHEEL_SIZE+WHEEL_SIZE+BODY_SIZE;
 
 //	structures we need later
 
@@ -234,144 +236,32 @@ HRESULT InitDevice()
 	if (FAILED(hr))
 		return hr;
 
+	
 	// Create vertex buffer, the triangle
-	SimpleVertex vertices[NUM_VERTICES];
+	SimpleVertex wheels[WHEEL_SIZE+WHEEL_SIZE];
 
-
-	const int WHEEL_SIZE = 48;
+	
 	//Wheel 1
 	int div = 16;
 	int num = -3;
 	for (int i = 0; i < WHEEL_SIZE; i++ ) {
-		vertices[i++].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//1
-		vertices[i++].Pos = XMFLOAT3(cos((num * M_PI) / div), sin((num * M_PI) / div), 0.0f);
-		vertices[i].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);
+		wheels[i++].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//1
+		wheels[i++].Pos = XMFLOAT3(cos((num * M_PI) / div), sin((num * M_PI) / div), 0.0f);
+		wheels[i].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);
 		num += 2;
 	}
 
 	//Wheel 2
 	num = -3;
-	for (int i = 48; i < WHEEL_SIZE+WHEEL_SIZE; i++) {
-		vertices[i++].Pos = XMFLOAT3(3.0f, 0.0f, 0.0f);
-		vertices[i++].Pos = XMFLOAT3(cos((num * M_PI) / div)+3.0f, sin((num * M_PI) / div), 0.0f);
-		vertices[i].Pos = XMFLOAT3(cos((num - 2) * M_PI / div)+3.0f, sin((num - 2) * M_PI / div), 0.0f);
+	for (int i = WHEEL_SIZE; i < WHEEL_SIZE+WHEEL_SIZE; i++) {
+		wheels[i++].Pos = XMFLOAT3(3.0f, 0.0f, 0.0f);
+		wheels[i++].Pos = XMFLOAT3(cos((num * M_PI) / div)+3.0f, sin((num * M_PI) / div), 0.0f);
+		wheels[i].Pos = XMFLOAT3(cos((num - 2) * M_PI / div)+3.0f, sin((num - 2) * M_PI / div), 0.0f);
 		num += 2;
 	}
 
-	//Body
-	vertices[96].Pos = XMFLOAT3(-2.0f, 2.0f, 0.0f);//1 
-	vertices[97].Pos = XMFLOAT3(5.0f, 0.5f, 0.0f);
-	vertices[98].Pos = XMFLOAT3(-2.0f, 0.5f, 0.0f);
-
-	vertices[99].Pos = XMFLOAT3(-2.0f, 2.0f, 0.0f);//2
-	vertices[100].Pos = XMFLOAT3(5.0f, 2.0f, 0.0f);
-	vertices[101].Pos = XMFLOAT3(5.0f, 0.5f, 0.0f);
-
-	vertices[102].Pos = XMFLOAT3(-1.0f, 2.0f, 0.0f);//3
-	vertices[103].Pos = XMFLOAT3(1.0f, 4.0f, 0.0f);
-	vertices[104].Pos = XMFLOAT3(1.0f, 2.0f, 0.0f);
-
-	vertices[105].Pos = XMFLOAT3(1.0f, 4.0f, 0.0f);
-	vertices[106].Pos = XMFLOAT3(5.0f, 3.0f, 0.0f);
-	vertices[107].Pos = XMFLOAT3(5.0f, 2.0f, 0.0f);
 
 
-	/*
-	vertices[0].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//1
-	vertices[1].Pos = XMFLOAT3(cos(M_PI / div), sin(M_PI / div), 0.0f);//
-	vertices[2].Pos = XMFLOAT3(cos(M_PI / div), -sin(M_PI / div), 0.0f);//
-
-	vertices[3].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//2
-	vertices[4].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num*M_PI / div), 0.0f);//
-	vertices[5].Pos = XMFLOAT3(cos(M_PI / div), sin(M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[6].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//3
-	vertices[7].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num *M_PI / div), 0.0f);//
-	vertices[8].Pos = XMFLOAT3(cos((num-2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[9].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//4
-	vertices[10].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[11].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[12].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//5
-	vertices[13].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[14].Pos = XMFLOAT3(cos((num-2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[15].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//6
-	vertices[16].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[17].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[18].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//7
-	vertices[19].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[20].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[21].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//8
-	vertices[22].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[23].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[24].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//9
-	vertices[25].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[26].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[27].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//10
-	vertices[28].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[29].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[30].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//11
-	vertices[31].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[32].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[33].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//12
-	vertices[34].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[35].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[36].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//13
-	vertices[37].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[38].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[39].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//14
-	vertices[40].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[41].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[42].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//15
-	vertices[43].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[44].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	num += 2;
-	vertices[45].Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);//16
-	vertices[46].Pos = XMFLOAT3(cos(num * M_PI / div), sin(num * M_PI / div), 0.0f);//
-	vertices[47].Pos = XMFLOAT3(cos((num - 2) * M_PI / div), sin((num - 2) * M_PI / div), 0.0f);//
-
-	//Wheel 2
-	vertices[48].Pos = XMFLOAT3(3.0f, 0.0f, 0.0f);//17
-	vertices[49].Pos = XMFLOAT3(cos(num * M_PI / div) + 3.0, sin(num * M_PI / div), 0.0f);//
-	vertices[50].Pos = XMFLOAT3(cos((num - 2) * M_PI / div) + 3.0, sin((num - 2) * M_PI / div), 0.0f);//
-
-	vertices[51].Pos = XMFLOAT3(3.0f, 0.0f, 0.0f);//18
-	vertices[52].Pos = XMFLOAT3(cos(num * M_PI / div) + 3.0, sin(num * M_PI / div), 0.0f);//
-	vertices[53].Pos = XMFLOAT3(cos((num - 2) * M_PI / div) + 3.0, sin((num - 2) * M_PI / div), 0.0f);//
-
-	vertices[54].Pos = XMFLOAT3(3.0f, 0.0f, 0.0f);//19
-	vertices[55].Pos = XMFLOAT3(cos(num * M_PI / div) + 3.0, sin(num * M_PI / div), 0.0f);//
-	vertices[56].Pos = XMFLOAT3(cos((num - 2) * M_PI / div) + 3.0, sin((num - 2) * M_PI / div), 0.0f);//
-
-	vertices[57].Pos = XMFLOAT3(3.0f, 0.0f, 0.0f);//20
-	vertices[58].Pos = XMFLOAT3(cos(num * M_PI / div) + 3.0, sin(num * M_PI / div), 0.0f);//
-	vertices[59].Pos = XMFLOAT3(cos((num - 2) * M_PI / div) + 3.0, sin((num - 2) * M_PI / div), 0.0f);//
-	*/
 	D3D11_BUFFER_DESC bd;
 	D3D11_SUBRESOURCE_DATA InitData;
 
@@ -379,24 +269,54 @@ HRESULT InitDevice()
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DEFAULT;
 
-	bd.ByteWidth = sizeof(SimpleVertex) * NUM_VERTICES;
+	bd.ByteWidth = sizeof(SimpleVertex) * (WHEEL_SIZE+WHEEL_SIZE);
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;	
 	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = vertices;
+	InitData.pSysMem = wheels;
 	hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &g_pVertexBuffer);
 	if (FAILED(hr))
 		return hr;
+	
+	//Body
+	SimpleVertex body[BODY_SIZE];
+	body[0].Pos = XMFLOAT3(-2.0f, 2.0f, 0.0f);//1 
+	body[1].Pos = XMFLOAT3(5.0f, 0.5f, 0.0f);
+	body[2].Pos = XMFLOAT3(-2.0f, 0.5f, 0.0f);
 
-	
-	
+	body[3].Pos = XMFLOAT3(-2.0f, 2.0f, 0.0f);//2
+	body[4].Pos = XMFLOAT3(5.0f, 2.0f, 0.0f);
+	body[5].Pos = XMFLOAT3(5.0f, 0.5f, 0.0f);
+
+	body[6].Pos = XMFLOAT3(-1.0f, 2.0f, 0.0f);//3
+	body[7].Pos = XMFLOAT3(1.0f, 4.0f, 0.0f);
+	body[8].Pos = XMFLOAT3(1.0f, 2.0f, 0.0f);
+
+	body[9].Pos = XMFLOAT3(1.0f, 4.0f, 0.0f);//4
+	body[10].Pos = XMFLOAT3(5.0f, 4.0f, 0.0f);
+	body[11].Pos = XMFLOAT3(5.0f, 2.0f, 0.0f);
+
+	body[12].Pos = XMFLOAT3(1.0f, 4.0f, 0.0f);//5
+	body[13].Pos = XMFLOAT3(5.0f, 2.0f, 0.0f);
+	body[14].Pos = XMFLOAT3(1.0f, 2.0f, 0.0f);
+
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(SimpleVertex) * BODY_SIZE;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	ZeroMemory(&InitData, sizeof(InitData));
+	InitData.pSysMem = body;
+	hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &g_pVertexBuffer2);
+	if (FAILED(hr))
+		return hr;
 
 	// Supply the vertex shader constant data.
 
 	VsConstData.some_variable_a = 0;
 	VsConstData.some_variable_b = 0;
 	VsConstData.some_variable_c = 1;
-	VsConstData.some_variable_d = 1;
+	VsConstData.some_variable_d = 0;
 
 	// Fill in a buffer description.
 	D3D11_BUFFER_DESC cbDesc;
@@ -455,8 +375,10 @@ HRESULT InitDevice()
 		UINT stride = sizeof(SimpleVertex);
 		UINT offset = 0;
 		g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
-		g_pImmediateContext->Draw(NUM_VERTICES, 0);		//whatever you have set before as model (mesh, vertexbuffer) will be drawn here finally. First parameter is the vertex count, second the offset
+		g_pImmediateContext->Draw(WHEEL_SIZE+WHEEL_SIZE, 0);		//whatever you have set before as model (mesh, vertexbuffer) will be drawn here finally. First parameter is the vertex count, second the offset
 
+		g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer2, &stride, &offset);
+		g_pImmediateContext->Draw(BODY_SIZE, 0);
 												// Set vertex buffer, setting the model
 
 		// Present the information rendered to the back buffer to the front buffer (the screen)
@@ -500,7 +422,7 @@ int WINAPI wWinMain(				//	the main function in a window program. program starts
 
 				//													STEP TWO: OPENING THE WINDOW with x,y position and xlen, ylen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	RECT rc = { 0, 0, 640, 480 };
-	hMain = CreateWindow(L"TutorialWindowClass", L"Direct3D 11 Tutorial 2: Rendering a Triangle",
+	hMain = CreateWindow(L"TutorialWindowClass", L"Moving Car Homework 3",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance,
 		NULL);
@@ -644,8 +566,14 @@ void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 
 	switch (vk)
 		{
-			case 65://a
-
+			case 'A'://a
+				VsConstData.some_variable_c -= 1;//moves left
+				//VsConstData.some_variable_a -= 0.1f;
+				//VsConstData.some_variable_b += 0.3f;
+				break;
+			case 'D'://a
+				VsConstData.some_variable_c += 1;//moves right
+				//VsConstData.some_variable_b -= 0.3;
 				break;
 			default:break;
 			
